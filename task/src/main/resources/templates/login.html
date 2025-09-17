@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>Login | Task Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root{
+          --glass-bg: rgba(255,255,255,0.07);
+          --glass-border: rgba(255,255,255,0.14);
+          --accent-start: #00f2fe;
+          --accent-end: #4facfe;
+          --card-width: 420px;
+        }
+        *{box-sizing:border-box}
+        body{
+          margin:0;
+          font-family:'Poppins',sans-serif;
+          background: url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?fit=crop&w=1950&q=80') center/cover no-repeat fixed;
+          min-height:100vh;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          color:#fff;
+        }
+        .overlay{ position:fixed; inset:0; background:linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)); z-index:0; }
+        .card{
+          position:relative; z-index:1;
+          width:clamp(290px, 90vw, var(--card-width));
+          padding:40px 36px; border-radius:16px;
+          background:var(--glass-bg);
+          border:1px solid var(--glass-border);
+          box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+          backdrop-filter: blur(10px) saturate(120%);
+          text-align:center;
+        }
+        .logo{ width:42px;height:42px;border-radius:10px; background:linear-gradient(135deg,var(--accent-start),var(--accent-end)); display:flex;align-items:center;justify-content:center; font-weight:700;color:#04323a;font-size:18px; margin:0 auto 12px; }
+        h1{ margin:6px 0 8px; font-size:22px; font-weight:600; color:#fff; }
+        p.lead{ margin:0 0 20px;color:#dfeff6;font-size:13px;}
+        .input-group{ position:relative; margin:12px 0; }
+        .input-group .icon{ position:absolute; left:12px; top:50%; transform:translateY(-50%); width:18px;height:18px; opacity:0.85; }
+        input{ width:100%; padding:13px 14px 13px 44px; border-radius:11px; border:none; background:rgba(255,255,255,0.92); color:#23313a; font-size:14px; outline:none; }
+        input:focus{ box-shadow: 0 6px 18px rgba(79,172,254,0.18); transform: translateY(-1px); }
+        .btn{ width:100%; padding:12px 14px; margin-top:16px; border-radius:11px; border:none; cursor:pointer; font-weight:600; font-size:15px; color:#042331; background: linear-gradient(90deg,var(--accent-start),var(--accent-end)); }
+        .btn:hover{ transform:translateY(-3px); }
+        .sub{ margin-top:14px; color:#e6f7ff; font-size:13px; }
+        .sub a{ color:#dff8ff; font-weight:600; text-decoration:none; }
+        .error{ margin-bottom:8px; font-size:13px; color:#ff9b9b; padding:8px; border-radius:8px; }
+    </style>
+</head>
+<body>
+<div class="overlay"></div>
+
+<main class="card" role="main">
+    <div class="logo">TM</div>
+    <h1>Task Manager</h1>
+    <p class="lead">Login to manage your tasks efficiently</p>
+
+    <form th:action="@{/auth/login}" method="post">
+        <div th:if="${param.error}" class="error">Invalid email or password!</div>
+
+        <div class="input-group">
+            <span class="icon">📧</span>
+            <input id="username" name="username" type="text" placeholder="Email" required/>
+        </div>
+
+        <div class="input-group">
+            <span class="icon">🔒</span>
+            <input id="password" name="password" type="password" placeholder="Password" required/>
+        </div>
+
+        <button class="btn" type="submit">Login</button>
+    </form>
+
+    <div class="sub">
+        Don’t have an account? <a th:href="@{/auth/register}">Register</a>
+    </div>
+</main>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>Register | Task Manager</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root{
+          --glass-bg: rgba(255,255,255,0.07);
+          --glass-border: rgba(255,255,255,0.14);
+          --accent-start: #42e695;
+          --accent-end: #3bb2b8;
+          --card-width: 460px;
+        }
+        *{box-sizing:border-box}
+        body{ margin:0; font-family:'Poppins',sans-serif;
+          background: url('https://images.unsplash.com/photo-1522202176988-66273c2fd55f?fit=crop&w=1950&q=80') center/cover no-repeat fixed;
+          min-height:100vh; display:flex; align-items:center; justify-content:center; color:#fff;}
+        .overlay{ position:fixed; inset:0; background:rgba(0,0,0,0.62); }
+        .card{ width:clamp(300px,92vw,var(--card-width)); padding:44px 36px; border-radius:16px;
+          background:var(--glass-bg); border:1px solid var(--glass-border); backdrop-filter: blur(10px) saturate(120%); text-align:center;}
+        .logo{ width:44px;height:44px;border-radius:10px;margin:0 auto 8px; background:linear-gradient(135deg,var(--accent-start),var(--accent-end)); display:flex; align-items:center; justify-content:center; font-weight:700; color:#022927;}
+        h1{ margin:6px 0 8px; font-size:24px; color:#fff; }
+        p.lead{ margin:0 0 18px; color:#dfeff1; font-size:13px; }
+        .input-group{ position:relative; margin:12px 0; }
+        .input-group .icon{ position:absolute; left:12px; top:50%; transform:translateY(-50%); }
+        input{ width:100%; padding:13px 14px 13px 44px; border-radius:11px; border:none; background:rgba(255,255,255,0.92); }
+        .btn{ width:100%; padding:13px; margin-top:16px; border-radius:11px; border:none; font-weight:700; font-size:15px; color:#032a24; background:linear-gradient(90deg,var(--accent-start),var(--accent-end)); cursor:pointer; }
+        .btn:hover{ transform:translateY(-3px); }
+        .sub{ margin-top:14px; font-size:13px; }
+        .sub a{ color:#dff8f5; font-weight:600; text-decoration:none; }
+        .error{ margin-bottom:8px; font-size:13px; color:#ff9b9b; padding:8px; border-radius:8px; }
+    </style>
+</head>
+<body>
+<div class="overlay"></div>
+
+<main class="card" role="main">
+    <div class="logo">TM</div>
+    <h1>Create account</h1>
+    <p class="lead">Sign up and start organizing your tasks.</p>
+
+    <form th:action="@{/auth/register}" method="post">
+        <div th:if="${param.error}" class="error">Registration failed. Try again!</div>
+
+        <div class="input-group">
+            <span class="icon">👤</span>
+            <input name="name" type="text" placeholder="Full name" required/>
+        </div>
+
+        <div class="input-group">
+            <span class="icon">📧</span>
+            <input name="email" type="email" placeholder="Email address" required/>
+        </div>
+
+        <div class="input-group">
+            <span class="icon">🔒</span>
+            <input name="password" type="password" placeholder="Create password" required/>
+        </div>
+
+        <button class="btn" type="submit">Register</button>
+    </form>
+
+    <div class="sub">Already have an account? <a th:href="@{/auth/login}">Login</a></div>
+</main>
+</body>
+</html>

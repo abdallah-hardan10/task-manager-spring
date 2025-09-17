@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Task Manager | Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a2e0e6ad5f.js" crossorigin="anonymous"></script>
+    <style>
+        body {
+            background: linear-gradient(180deg, #e3f2fd, #ffffff);
+            font-family: 'Poppins', sans-serif;
+            color: #333;
+            min-height: 100vh;
+            transition: background 0.3s, color 0.3s;
+        }
+        body.dark {
+            background: #121212;
+            color: #f1f1f1;
+        }
+        body.dark .navbar {
+            background: #0d47a1 !important;
+        }
+        body.dark .card-stats {
+            background: #1e1e1e;
+            color: #f1f1f1;
+        }
+        body.dark .table {
+            background: #1e1e1e;
+            color: #f1f1f1;
+        }
+        body.dark .table thead {
+            background: #1976d2;
+            color: #fff;
+        }
+        body.dark .btn-add {
+            background: linear-gradient(90deg, #42a5f5, #1565c0);
+        }
+
+        .navbar {
+            background: #1565c0 !important;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .btn-outline-light {
+            border-radius: 25px;
+            padding: 6px 16px;
+            transition: 0.3s ease;
+            font-weight: 500;
+        }
+        .btn-outline-light:hover {
+            background: #fff;
+            color: #1565c0 !important;
+        }
+
+        .welcome-title {
+            font-size: 2.4rem;
+            font-weight: 700;
+            color: #0d47a1;
+        }
+        body.dark .welcome-title {
+            color: #90caf9;
+        }
+
+        .card-stats {
+            border-radius: 16px;
+            background: #f5f9ff;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .card-stats:hover {
+            transform: translateY(-6px) scale(1.02);
+            border-color: #1976d2;
+            box-shadow: 0 6px 20px rgba(25, 118, 210, 0.25);
+            background: linear-gradient(145deg, #ffffff, #e3f2fd);
+        }
+        .card-stats i {
+            font-size: 2.5rem;
+            color: #1976d2;
+            margin-bottom: 10px;
+        }
+        .card-stats h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #0d47a1;
+        }
+
+        .table {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        .table thead {
+            background: #1976d2;
+            color: #fff;
+        }
+        .table tbody tr:hover {
+            background: rgba(25, 118, 210, 0.07);
+        }
+
+        .form-control {
+            border-radius: 10px;
+        }
+        .btn-add {
+            background: linear-gradient(90deg, #1565c0, #42a5f5);
+            border: none;
+            font-weight: 600;
+            border-radius: 12px;
+            padding: 10px 20px;
+            transition: 0.3s ease;
+        }
+        .btn-add:hover {
+            background: linear-gradient(90deg, #0d47a1, #1976d2);
+        }
+
+        .section-title {
+            font-weight: 600;
+            color: #1565c0;
+        }
+        body.dark .section-title {
+            color: #90caf9;
+        }
+
+        .form-check-label {
+            color: white;
+            user-select: none;
+        }
+        body.dark .form-check-label {
+            color: #f1f1f1;
+        }
+
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba%28255, 255, 255, 1%29' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+        }
+
+        /* Notifications pulse effect */
+        .badge-pulse {
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg px-4 py-2">
+    <a class="navbar-brand fw-bold d-flex align-items-center text-white me-4" th:href="@{/dashboard}">
+        <img src="https://img.icons8.com/ios-filled/30/ffffff/task.png" alt="logo" class="me-2"/>
+        Task Manager
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarContent">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+
+            <!-- Search -->
+            <li class="nav-item mx-2">
+                <form class="d-flex" th:action="@{/tasks/search}" method="get">
+                    <input class="form-control form-control-sm me-2" type="search" name="query" placeholder="Search tasks...">
+                    <button class="btn btn-outline-light btn-sm rounded-pill" type="submit">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </form>
+            </li>
+
+            <!-- Notifications -->
+            <li class="nav-item mx-2 position-relative">
+                <a class="btn btn-outline-light btn-sm rounded-pill position-relative" href="#" data-bs-toggle="dropdown">
+                    <i class="fas fa-bell me-1"></i> Notifications
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger badge-pulse" th:text="${pendingTasks}">0</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><span class="dropdown-item">You have <span th:text="${pendingTasks}">0</span> pending tasks</span></li>
+                </ul>
+            </li>
+
+            <!-- Main Links -->
+            <li class="nav-item mx-2">
+                <a class="btn btn-outline-light btn-sm rounded-pill" th:href="@{/dashboard}">
+                    <i class="fas fa-tachometer-alt me-1"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item mx-2">
+                <a class="btn btn-outline-light btn-sm rounded-pill" th:href="@{/tasks}">
+                    <i class="fas fa-tasks me-1"></i> Tasks
+                </a>
+            </li>
+
+            <!-- Theme Toggle -->
+            <li class="nav-item mx-3 d-flex align-items-center">
+                <div class="form-check form-switch text-white m-0">
+                    <input class="form-check-input" type="checkbox" id="themeSwitch">
+                    <label class="form-check-label" for="themeSwitch" id="themeLabel">🌙 Dark</label>
+                </div>
+            </li>
+
+            <!-- نفس الكود الموجود عندك لكن غير هذا السطر -->
+            <!-- User Profile -->
+            <li class="nav-item dropdown ms-3">
+                <a class="btn btn-outline-light btn-sm rounded-pill dropdown-toggle d-flex align-items-center" href="#" id="userMenu"
+                   data-bs-toggle="dropdown">
+                    <i class="fas fa-user-circle me-1"></i>
+                    <span th:text="${user.name}">User</span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><a class="dropdown-item" th:href="@{/tasks/profile}">Profile</a></li>
+                    <li><a class="dropdown-item" th:href="@{/settings}">Settings</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <form th:action="@{/auth/logout}" method="post">
+                            <button type="submit" class="dropdown-item text-danger">Logout</button>
+                        </form>
+                    </li>
+                </ul>
+            </li>
+
+        </ul>
+    </div>
+</nav>
+
+<!-- Content -->
+<div class="container py-5">
+    <h2 class="text-center mb-5 welcome-title">Welcome, <span th:text="${user.name}"></span> 👋</h2>
+
+    <!-- Stats -->
+    <div class="row text-center mb-5">
+        <div class="col-md-4 mb-3">
+            <div class="card card-stats p-4">
+                <i class="fas fa-tasks"></i>
+                <h5>Total Tasks</h5>
+                <h2 th:text="${totalTasks}">0</h2>
+                <a th:href="@{/tasks}" class="small text-decoration-none">View All</a>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card card-stats p-4">
+                <i class="fas fa-check-circle"></i>
+                <h5>Completed</h5>
+                <h2 th:text="${completedTasks}">0</h2>
+                <a th:href="@{/tasks?filter=completed}" class="small text-decoration-none">View Completed</a>
+            </div>
+        </div>
+        <div class="col-md-4 mb-3">
+            <div class="card card-stats p-4">
+                <i class="fas fa-hourglass-half"></i>
+                <h5>Pending</h5>
+                <h2 th:text="${pendingTasks}">0</h2>
+                <a th:href="@{/tasks?filter=pending}" class="small text-decoration-none">View Pending</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Task Table -->
+    <div class="mb-5">
+        <h4 class="section-title mb-3">Your Tasks</h4>
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                <tr><th>Title</th><th>Description</th><th>Status</th><th>Actions</th></tr>
+                </thead>
+                <tbody>
+                <tr th:each="task : ${tasks}">
+                    <td th:text="${task.title}"></td>
+                    <td th:text="${task.description}"></td>
+                    <td>
+                        <span th:if="${task.completed}" class="badge bg-success"><i class="fas fa-check"></i> Done</span>
+                        <span th:unless="${task.completed}" class="badge bg-warning text-dark"><i class="fas fa-clock"></i> Pending</span>
+                    </td>
+                    <td>
+                        <form th:action="@{/tasks/toggle/{id}(id=${task.id})}" method="post" style="display:inline;">
+                            <button class="btn btn-success btn-sm" th:disabled="${task.completed}">Done</button>
+                        </form>
+                        <button type="button" class="btn btn-outline-primary btn-sm" data-bs-toggle="modal"
+                                th:attr="data-bs-target='#editModal-' + ${task.id}">Edit</button>
+                        <!-- Delete with confirm -->
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal"
+                                th:attr="data-bs-target='#deleteModal-' + ${task.id}">Delete</button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Add Task -->
+    <div class="mt-4">
+        <h4 class="section-title mb-3">Add New Task</h4>
+        <form th:action="@{/tasks/add}" method="post" class="bg-white p-4 rounded shadow-sm">
+            <div class="mb-3">
+                <label class="form-label">Title</label>
+                <input type="text" name="title" class="form-control" placeholder="Task title" required>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Description</label>
+                <textarea name="description" class="form-control" placeholder="Task description" required></textarea>
+            </div>
+            <input type="hidden" name="userEmail" th:value="${user.email}">
+            <button type="submit" class="btn btn-add">+ Add Task</button>
+        </form>
+    </div>
+</div>
+
+<!-- Edit Modals -->
+<div th:each="task : ${tasks}">
+    <div class="modal fade" th:id="'editModal-' + ${task.id}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Task</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form th:action="@{/tasks/edit/{id}(id=${task.id})}" method="post">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label class="form-label">Title</label>
+                            <input type="text" name="title" th:value="${task.title}" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" class="form-control" required th:text="${task.description}"></textarea>
+                        </div>
+                        <input type="hidden" name="userEmail" th:value="${user.email}">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirm Modal -->
+    <div class="modal fade" th:id="'deleteModal-' + ${task.id}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to delete <strong th:text="${task.title}">this task</strong>?
+                </div>
+                <div class="modal-footer">
+                    <form th:action="@{/tasks/delete/{id}(id=${task.id})}" method="post">
+                        <button type="submit" class="btn btn-danger">Yes, Delete</button>
+                    </form>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    // Dark/Light Toggle
+    const themeSwitch = document.getElementById('themeSwitch');
+    const themeLabel = document.getElementById('themeLabel');
+
+    if(localStorage.getItem('theme') === 'dark') {
+        document.body.classList.add('dark');
+        themeSwitch.checked = true;
+        themeLabel.textContent = '☀️ Light';
+    }
+
+    themeSwitch.addEventListener('change', () => {
+        document.body.classList.toggle('dark');
+        if(document.body.classList.contains('dark')) {
+            localStorage.setItem('theme', 'dark');
+            themeLabel.textContent = '☀️ Light';
+        } else {
+            localStorage.setItem('theme', 'light');
+            themeLabel.textContent = '🌙 Dark';
+        }
+    });
+</script>
+</body>
+</html>
