@@ -14,7 +14,7 @@ The application allows users to register, log in, and manage their tasks (Add, E
 
 1. Clone the Repository
 
-git clone <repository-link>
+git clone https://github.com/abdallah-hardan10/task-manager-spring.git
 
 
 2. Open the Project :
